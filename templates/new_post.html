@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+{{ error }}
 <form action="{{ url_for('edit_post' if post else 'new_post', post_id=post.id if post else 0) }}" method=post>
     <div class="form-group">
       <label for="titl">Title</label>

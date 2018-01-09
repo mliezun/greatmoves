@@ -21,7 +21,7 @@ class User(db.Entity):
 class Post(db.Entity):
     id = PrimaryKey(int, auto=True)
     author = Required(User)
-    title = Required(str, unique=True)
+    title = Required(str)
     body = Required(str)
     created_at = Required(datetime, default=datetime.now)
     # States: Active or Inactive
