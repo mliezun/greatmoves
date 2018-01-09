@@ -1,6 +1,7 @@
 from flask import Flask, render_template, session, request, redirect, url_for, abort
 from werkzeug.contrib.fixers import ProxyFix
 from flask_seasurf import SeaSurf
+from flask_misaka import Misaka
 from pony.orm import select, db_session, commit
 from models import db, User, Post, Comment
 import bcrypt
@@ -13,6 +14,7 @@ app.config.update(dict(
 ))
 
 csrf = SeaSurf(app)
+Misaka(app)
 
 db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
 db.generate_mapping(create_tables=True)
@@ -31,7 +33,7 @@ def new_post():
     if not session.get('logged_in') or session['user_type'] != 'A':
         abort(401)
     if request.method == 'POST':
-        Post(author=session['user_id'], title=request.form['title'], body=misaka.html(request.form['body']))
+        Post(author=session['user_id'], title=request.form['title'], body=request.form['body'])
         commit()
         return redirect(url_for('index'))
     return render_template('new_post.html')
