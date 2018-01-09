@@ -2,6 +2,12 @@
 {% block body %}
 {% if session.logged_in and session['user_type'] == 'A' %}
 <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-primary">Edit Post</a>
+<div class="float-right">
+<form action="{{ url_for('hide_post', post_id=post.id) }}" method=post>
+    <button type="submit" class="btn btn-secondary">Hide</button>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+</form>
+    </div>
 {% endif %}
 <div class="row">
 
@@ -24,12 +30,18 @@
         {% for c in comments %}
         <div class="media mb-0 comment" {% if loop.index0 % 2== 0 %} style="background-color: #e9ecef;" {% endif %}>
             <div class="media-body">
-                <h5 class="mt-0">{{ c.user.username|safe }}</h5>
-                {{ c.comment|safe }}
+                <h5 class="mt-0">{{ c.user.username }}</h5>
+                {{ c.comment }}
             </div>
+            {% if session.logged_in and session['user_type'] == 'A' %}
+            <form action="{{ url_for('hide_comment', post_id=post.id, comment_id=c.id) }}" method=post>
+                <button type="submit" class="btn btn-secondary">Hide</button>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            </form>
+            {% endif %}
         </div>
         {% else %}
-        <p class="text-center">No comments yet, be the first one to comment and you'll get a reward</p>
+        <p class="text-center" style="padding-top: 2em;">No comments yet, be the first one to comment and you'll get a reward</p>
         {% endfor %}
 
         {% if session.logged_in %}
@@ -37,14 +49,14 @@
         <hr>
         {% endif %}
         <form action="{{ url_for('new_comment', post_id=post.id) }}" method=post>
-            <div class="form-group">
-                <textarea class="form-control" rows="5" id="bdy" name="comment"></textarea>
+            <div class="form-group" style="padding-top: 2em;">
+                <textarea class="form-control" rows="5" id="comm" name="comment"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Comment!</button>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         </form>
         {% else %}
-        <p class="text-center">You must be logged in to comment</p>
+        <p class="text-center" style="padding-top: 2em;">You must be logged in to comment</p>
         {% endif %}
     </div>
 

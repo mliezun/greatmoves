@@ -5,7 +5,6 @@ from flask_misaka import Misaka
 from pony.orm import select, db_session, commit
 from models import db, User, Post, Comment
 import bcrypt
-import misaka
 
 app = Flask(__name__)
 
@@ -55,13 +54,28 @@ def edit_post(post_id):
     return render_template('new_post.html', post = post)
 
 
+@app.route('/post/hide/<int:post_id>', methods=['POST'])
+@db_session
+def hide_post(post_id):
+    if not session.get('logged_in') or session['user_type'] != 'A':
+        abort(401)
+    post = select(p for p in Post if p.id == post_id).first()
+    if not post:
+        abort(404)
+    post.state = 'I'
+    commit()
+    return redirect(url_for('index'))
+
+
 @app.route('/post/<int:post_id>')
 @db_session
 def show_post(post_id):
     post = select(p for p in Post if p.id == post_id and p.state == 'A').first()
     if not post:
         abort(404)
-    return render_template('post.html', post=post, comments=post.comments.order_by(Comment.id))
+    return render_template('post.html',
+                           post=post,
+                           comments=select(c for c in Comment if c.post == post and c.state == 'A'))
 
 
 @app.route('/post/<int:post_id>/comment/new', methods=['POST'])
@@ -73,6 +87,19 @@ def new_comment(post_id):
         if len(request.form['comment']) > 0:
             Comment(post=post_id, user=session['user_id'], comment=request.form['comment'])
             commit()
+    return redirect(url_for('show_post', post_id=post_id))
+
+
+@app.route('/post/<int:post_id>/comment/<int:comment_id>/hide', methods=['POST'])
+@db_session
+def hide_comment(post_id, comment_id):
+    if not session.get('logged_in') or session['user_type'] != 'A':
+        abort(401)
+    comment = select(c for c in Comment if c.id == comment_id).first()
+    if not comment:
+        abort(404)
+    comment.state = 'I'
+    commit()
     return redirect(url_for('show_post', post_id=post_id))
 
 
@@ -95,7 +122,6 @@ def login():
 
 
 @app.route('/user/logout')
-@db_session
 def logout():
     session.pop('logged_in', None)
     return redirect(url_for('index'))
@@ -118,6 +144,7 @@ def signup():
             commit()
             return redirect(url_for('index'))
     return render_template('signup.html', error=error)
+
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
