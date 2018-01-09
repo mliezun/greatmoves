@@ -1,4 +1,5 @@
 from flask import Flask, render_template, session, request, redirect, url_for, abort
+from werkzeug.contrib.fixers import ProxyFix
 from flask_seasurf import SeaSurf
 from pony.orm import select, db_session, commit
 from models import db, User, Post, Comment
@@ -115,3 +116,8 @@ def signup():
             commit()
             return redirect(url_for('index'))
     return render_template('signup.html', error=error)
+
+app.wsgi_app = ProxyFix(app.wsgi_app)
+
+if __name__ == '__main__':
+    app.run()
