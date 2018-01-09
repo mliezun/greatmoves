@@ -1,0 +1,43 @@
+body {
+    font-family: 'Raleway', sans-serif;
+}
+.page-header {
+    font-family: 'Acme', sans-serif;
+}
+.metanav {
+    text-align: right;
+}
+#signup {
+    margin-left: 0.5em;
+}
+.post-title {
+    font-family: 'Oswald', sans-serif;
+    text-align: center;
+}
+.post-title a {
+    color: black;
+}
+.post-info {
+    text-align: right;
+}
+.post-body {
+    padding-left: 2em;
+    padding-right: 2em;
+    word-wrap: break-word;
+}
+.comment {
+    font-family: 'Roboto', sans-serif;
+    padding-left: 2em;
+    padding-right: 2em;
+    padding-bottom: 1em;
+    padding-top: 1em;
+    border-radius: .3rem;
+    word-break: break-all;
+}
+a {
+    text-decoration: none;
+}
+a:hover, a:focus {
+    color: #2A6496;
+    text-decoration: none;
+}

@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block body %}
+{% if session.logged_in and session['user_type'] == 'A' %}
+<a href="{{ url_for('new_post') }}" class="btn btn-primary">New Post</a>
+{% endif %}
+{% for p in posts %}
+
+<div class="row">
+
+    <div class="col-lg-12">
+
+        <h1 class="mt-4 post-title"><a href="{{ url_for('show_post', post_id=p.id) }}">{{ p.title }}</a></h1>
+
+        <p class="lead post-info">
+            posted on {{ p.created_at.date().isoformat() }}
+        </p>
+
+        <hr>
+
+        <div class="post-body">
+            {% if p.body|length > 700 %}
+                {{ p.body[:500]|safe }}
+                <a href="{{ url_for('show_post', post_id=p.id) }}">continue reading</a>
+            {% else %}
+                {{ p.body|safe }}
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
