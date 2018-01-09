@@ -1,0 +1,14 @@
+bcrypt==3.1.4
+cffi==1.11.2
+click==6.7
+Flask==0.12.2
+Flask-Misaka==0.4.1
+Flask-SeaSurf==0.2.2
+itsdangerous==0.24
+Jinja2==2.10
+MarkupSafe==1.0
+misaka==2.1.0
+pony==0.7.3
+pycparser==2.18
+six==1.11.0
+Werkzeug==0.14.1
