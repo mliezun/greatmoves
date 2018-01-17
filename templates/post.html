@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-{% if session.logged_in and session['user_type'] == 'A' %}
+{% if session.user_state == 'A' and session['user_type'] == 'A' %}
 <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-primary">Edit Post</a>
 <div class="float-right">
 <form action="{{ url_for('hide_post', post_id=post.id) }}" method=post>
@@ -33,7 +33,7 @@
                 <h5 class="mt-0">{{ c.user.username }}</h5>
                 {{ c.comment }}
             </div>
-            {% if session.logged_in and session['user_type'] == 'A' %}
+            {% if session.user_state == 'A' and session['user_type'] == 'A' %}
             <form action="{{ url_for('hide_comment', post_id=post.id, comment_id=c.id) }}" method=post>
                 <button type="submit" class="btn btn-secondary">Hide</button>
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
@@ -44,7 +44,7 @@
         <p class="text-center" style="padding-top: 2em;">No comments yet, be the first one to comment and you'll get a reward</p>
         {% endfor %}
 
-        {% if session.logged_in %}
+        {% if session.user_state == 'A' %}
         {% if comments %}
         <hr>
         {% endif %}
@@ -55,6 +55,8 @@
             <button type="submit" class="btn btn-primary">Comment!</button>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         </form>
+        {% elif session.user_state == 'P' %}
+        <p class="text-center" style="padding-top: 2em;">You have to confirm your email to comment</p>
         {% else %}
         <p class="text-center" style="padding-top: 2em;">You must be logged in to comment</p>
         {% endif %}

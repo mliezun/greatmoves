@@ -9,10 +9,11 @@ class User(db.Entity):
     username = Required(str, unique=True)
     password = Required(str)
     email = Required(str, unique=True)
+    token = Required(str)
     # Types: Admin or Guest
     type = Required(str, default='G')
-    # States: Active or Inactive
-    state = Required(str, default='A')
+    # States: Active, Inactive or Pending
+    state = Required(str, default='P')
 
     posts = Set('Post')
     comments = Set('Comment')

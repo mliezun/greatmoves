@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-{% if session.logged_in and session['user_type'] == 'A' %}
+{% if session.user_state == 'A' and session['user_type'] == 'A' %}
 <a href="{{ url_for('new_post') }}" class="btn btn-primary">New Post</a>
 {% endif %}
 {% for p in posts %}
