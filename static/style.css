@@ -41,3 +41,6 @@ a:hover, a:focus {
     color: #2A6496;
     text-decoration: none;
 }
+pre {
+    background-color: #e9ecef;
+}
