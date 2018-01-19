@@ -43,4 +43,6 @@ a:hover, a:focus {
 }
 pre {
     background-color: #e9ecef;
+    padding: 1.2em 1.2em 1.2em 1.2em;
+    border-radius: .14rem;
 }
