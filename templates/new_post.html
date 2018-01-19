@@ -17,7 +17,7 @@
 <script>
 window.onload = function() {
     var simplemde = new SimpleMDE();
-    {% if post %} simplemde.value("{{ post.body }}"); {% endif %}
+    {% if post %} simplemde.value({{ post.body|tojson|safe }}); {% endif %}
 }
 </script>
 {% endblock %}
