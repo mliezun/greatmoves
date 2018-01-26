@@ -7,9 +7,7 @@
         $('#footer').css('margin-top', (docHeight - footerTop) + 'px');
     }
 
-    $(document).ready(function () {
-        $('.post-body').each(function (i, e) {
-            $(e).dotdotdot()
-        })
-    }
+    $('.post-body').each(function (i, e) {
+        $(e).dotdotdot()
+    })
 })()
