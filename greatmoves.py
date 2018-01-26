@@ -2,7 +2,7 @@ from flask import Flask, render_template, session, request, redirect, url_for, a
 from werkzeug.contrib.fixers import ProxyFix
 from flask_seasurf import SeaSurf
 from flask_misaka import Misaka
-from pony.orm import select, db_session, commit
+from pony.orm import select, db_session, commit, desc
 from models import db, User, Post, Comment
 from random import randrange
 from mailgun import send_account_verification, send_password_reset
@@ -24,7 +24,7 @@ db.generate_mapping(create_tables=True)
 @app.route('/')
 @db_session
 def index():
-    posts = select(p for p in Post if p.state == 'A')
+    posts = select(p for p in Post if p.state == 'A').order_by(desc(Post.id))
     return render_template('index.html', posts=posts)
 
 
