@@ -7,10 +7,9 @@
         $('#footer').css('margin-top', (docHeight - footerTop) + 'px');
     }
 
-    $('.post-body').each(function (i, e) {
-        $(e).shorten({
-            showChars: 500,
-            moreText: 'read more'
+    $(document).ready(function () {
+        $('.post-body').each(function (i, e) {
+            $(e).dotdotdot()
         })
-    })
+    }
 })()
