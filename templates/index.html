@@ -19,10 +19,16 @@
 
         <div class="post-body">
             {% if p.body|length > 800 %}
-                {{ p.body|markdown|truncate(500) }}
-                <p><a href="{{ url_for('show_post', post_id=p.id) }}">Continue reading >></a></p>
+                <div class="post-content">
+                    {{ p.body|markdown|truncate(500) }} {{ '</code></pre>'|safe }}
+                </div>
+                <div class="post-continue">
+                    <p><a href="{{ url_for('show_post', post_id=p.id) }}">Continue reading >></a></p>
+                </div>
             {% else %}
+                <div class="post-content">
                 {{ p.body|markdown }}
+                </div>
             {% endif %}
         </div>
 
