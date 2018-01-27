@@ -24,8 +24,15 @@ db.generate_mapping(create_tables=True)
 @app.route('/')
 @db_session
 def index():
-    posts = select(p for p in Post if p.state == 'A').order_by(desc(Post.id))
+    posts = select(p for p in Post if p.state == 'A').order_by(desc(Post.id))[:10]
     return render_template('index.html', posts=posts)
+
+
+@app.route('/more_posts/<int:last_post_id>')
+@db_session
+def more_posts(last_post_id):
+    posts = select(p for p in Post if p.state == 'A' and p.id < last_post_id).order_by(desc(Post.id))[:10]
+    return render_template('more_posts.html', posts=posts)
 
 
 @app.route('/post/new', methods=['GET', 'POST'])

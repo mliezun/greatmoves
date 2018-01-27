@@ -1,8 +1,3 @@
-{% extends "layout.html" %}
-{% block body %}
-{% if session.user_state == 'A' and session['user_type'] == 'A' %}
-<a href="{{ url_for('new_post') }}" class="btn btn-primary">New Post</a>
-{% endif %}
 {% for p in posts %}
 
 <div class="row">
@@ -41,7 +36,3 @@
 </script>
 {% endif %}
 {% endfor %}
-
-<script src="{{ url_for('static', filename='index.js') }}"></script>
-
-{% endblock %}
