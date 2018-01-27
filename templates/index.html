@@ -18,7 +18,12 @@
         <hr>
 
         <div class="post-body">
-            {{ p.body|markdown }}
+            {% if p.body|length > 800 %}
+                {{ p.body|markdown|truncate(500) }}
+                <p><a href="{{ url_for('show_post', post_id=p.id) }}">Continue reading >></a></p>
+            {% else %}
+                {{ p.body|markdown }}
+            {% endif %}
         </div>
 
     </div>
