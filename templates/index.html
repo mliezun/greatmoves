@@ -3,6 +3,7 @@
 {% if session.user_state == 'A' and session['user_type'] == 'A' %}
 <a href="{{ url_for('new_post') }}" class="btn btn-primary">New Post</a>
 {% endif %}
+<div id=posts>
 {% for p in posts %}
 
 <div class="row">
@@ -36,12 +37,10 @@
 </div>
 
 {% if loop.last %}
-<script>
-    window.last_post_id = {{ p.id }}
-</script>
+<div id="last-post-id" style="display:none">{{ p.id }}</div>
 {% endif %}
 {% endfor %}
-
+</div>
 <script src="{{ url_for('static', filename='index.js') }}"></script>
 
 {% endblock %}

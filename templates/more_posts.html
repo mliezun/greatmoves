@@ -31,8 +31,6 @@
 </div>
 
 {% if loop.last %}
-<script>
-    window.last_post_id = {{ p.id }}
-</script>
+#{{ p.id }}
 {% endif %}
 {% endfor %}
