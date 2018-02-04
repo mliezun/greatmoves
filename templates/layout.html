@@ -13,13 +13,13 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
-    <title>Great Moves! Python 💚</title>
+    <title>Great Moves! Keep developing 💻</title>
 </head>
 <body>
 <div id=content class="container">
     <div class="jumbotron">
         <h1 class="page-header"><a href="{{ url_for('index') }}">Great Moves!</a></h1>
-        <h3 class="page-header">Python 💚</h3>
+        <h3 class="page-header">Keep developing 💻</h3>
         <div class=metanav>
             {% if not session.user_state == 'A' %}
             <a href="{{ url_for('login') }}">login</a>
