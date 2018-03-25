@@ -1,10 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "layout.html" %}
+{% block body %}
+<style>
+#upload-box {
+    width: 100vw;
+    height: 50vh;
+    padding: 10px;
+    border: 1px solid #dee0e1;
+    border-radius: 10px;
+    font-size: 32px;
+}
+.center-box {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+.content-box {
+    display: inline-block;
+    text-align: center;
+}
+</style>
+<script>
+function allowDrop(ev) {
+    console.log(ev)
+    ev.preventDefault();
+    var uploadText = document.getElementById('upload-text')
+    uploadText.innerHTML = 'Drop file to upload'
+}
+
+function drop(ev) {
+    console.log(ev)
+    ev.preventDefault()
+    var fileUploader = document.getElementById('pdfile')
+    fileUploader.files = ev.dataTransfer.files
+    var uploadText = document.getElementById('upload-text')
+    uploadText.innerHTML = 'File selected, click upload to start'
+}
+</script>
+{% if error %}
+    <div class="alert alert-danger">
+      <strong>Error!</strong> {{ error }}
+    </div>
+{% endif %}
+<h1>Make your own books!!</h1>
+<div id="upload-box" class="center-box" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div class="content-box" id="upload-text">
+        Drag PDF File
+    </div>
+</div>
+
+<form method=post enctype=multipart/form-data>
+    <input class="btn" id=pdfile type=file name=file>
+    <br><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <input class="btn btn-primary" style="width:100%" type=submit value=Upload>
+        </div>
+    </div>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+</form>
+{% endblock %}

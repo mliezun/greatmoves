@@ -1,14 +1,25 @@
-from flask import Flask, render_template, session, request, redirect, url_for, abort
-from werkzeug.contrib.fixers import ProxyFix
-from flask_seasurf import SeaSurf
-from flask_misaka import Misaka
-from pony.orm import select, db_session, commit, desc
-from models import db, User, Post, Comment
+import os
 from random import randrange
-from mailgun import send_account_verification, send_password_reset
+
 import bcrypt
+from flask import Flask, render_template, session, request, redirect, url_for, abort, send_from_directory
+from flask_misaka import Misaka
+from flask_seasurf import SeaSurf
+from pony.orm import select, db_session, commit, desc
+from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.utils import secure_filename
+
+from mailgun import send_account_verification, send_password_reset
+from models import db, User, Post, Comment
+from enlibrar_py2 import book
+from threading import Thread, Timer
+
+UPLOAD_FOLDER = 'pdfs/'
+ALLOWED_EXTENSIONS = {'pdf'}
 
 app = Flask(__name__)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.config.update(dict(
     SECRET_KEY='development key',
@@ -59,8 +70,8 @@ def edit_post(post_id):
         post.title = request.form['title']
         post.body = request.form['body']
         commit()
-        return redirect(url_for('show_post', post_id = post.id))
-    return render_template('new_post.html', post = post)
+        return redirect(url_for('show_post', post_id=post.id))
+    return render_template('new_post.html', post=post)
 
 
 @app.route('/post/hide/<int:post_id>', methods=['POST'])
@@ -118,7 +129,8 @@ def login():
     error = None
     if request.method == 'POST':
         user = select(u for u in User if u.username == request.form['username'] and u.state != 'I').first()
-        if not user or not bcrypt.hashpw(request.form['password'].encode('utf-8'), user.password.encode('utf-8')) == user.password:
+        if not user or not bcrypt.hashpw(request.form['password'].encode('utf-8'),
+                                         user.password.encode('utf-8')) == user.password:
             error = 'Invalid username or password'
         elif user.state == 'P':
             error = 'You need to verify your email'
@@ -140,12 +152,14 @@ def logout():
 def get_token():
     return str(randrange(101, 1000) ** randrange(100, 1001))[:100]
 
+
 @app.route('/user/new', methods=['GET', 'POST'])
 @db_session
 def signup():
     error = None
     if request.method == 'POST':
-        user = select(u for u in User if u.username == request.form['username'] or u.email == request.form['email']).first()
+        user = select(
+            u for u in User if u.username == request.form['username'] or u.email == request.form['email']).first()
         if user:
             error = 'The username or the email is already taken'
         elif len(request.form['password']) < 6:
@@ -208,7 +222,66 @@ def reset_password(username, token):
                            password=True)
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/enlibrario/', methods=['GET', 'POST'])
+def enlibrario():
+    if request.method == 'POST':
+        print request.files
+        if 'file' not in request.files:
+            return render_template('enlibrario.html', error='You have to select a file to upload')
+        file = request.files['file']
+        if file.filename == '':
+            return render_template('enlibrario.html', error='You have to select a file to upload')
+        if file and allowed_file(file.filename):
+            filename = str(randrange(10000, 100000)) + secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            def create_book():
+                book(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            t = Thread(target=create_book)
+            t.start()
+            return redirect(url_for('wait', filename=filename))
+    return render_template('enlibrario.html')
+
+
+@app.route('/enlibrario/<filename>')
+def download(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    if not os.path.exists(filepath):
+        return redirect(url_for('enlibrario'))
+    filepath2 = os.path.join(app.config['UPLOAD_FOLDER'], filename.replace('.pdf', '_formatted.pdf'))
+    if not os.path.exists(filepath2):
+        return redirect(url_for('wait', filename=filename))
+
+    def deleteFile(path):
+        os.remove(path)
+
+    deleteFile(filepath)
+    t = Timer(15 * 60, lambda: deleteFile(filepath2))
+    t.start()
+    return send_from_directory(UPLOAD_FOLDER, filename.replace('.pdf', '_formatted.pdf'), as_attachment=True)
+
+
+@app.route('/enlibrario/<filename>/status')
+def status(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename.replace('.pdf', '_formatted.pdf'))
+    return os.path.exists(filepath) and 'S' or 'N'
+
+
+@app.route('/enlibrario/<filename>/wait')
+def wait(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    if not os.path.exists(filepath):
+        return redirect(url_for('enlibrario'))
+    return render_template('waitbook.html', filename=filename)
+
+
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
