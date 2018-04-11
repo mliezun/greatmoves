@@ -1,8 +1,8 @@
 body {
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 .page-header {
-    font-family: 'Acme', sans-serif;
+    font-family: 'Zilla Slab', serif;
 }
 .metanav {
     text-align: right;
@@ -11,7 +11,7 @@ body {
     margin-left: 0.5em;
 }
 .post-title {
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Zilla Slab', serif;
     text-align: center;
 }
 .post-title a {
