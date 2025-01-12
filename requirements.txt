@@ -15,7 +15,7 @@ MarkupSafe==1.0
 misaka==2.1.0
 pony==0.7.3
 pycparser==2.18
-requests==2.31.0
+requests==2.32.0
 six==1.11.0
 urllib3==1.26.18
 Werkzeug==3.0.6
